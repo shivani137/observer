@@ -1,4 +1,5 @@
 import {isObject, getObject} from "./utils";
+import ProxyPolyfill from "./proxy-polyfill";
 
 
 
@@ -7,7 +8,6 @@ let callOnchange = function callOnchange(ctx, oldCtx, target, name, val) {
         ctx.onChange(getObject(ctx), getObject(target), name, val);
     }
 };
-
 
 let proxyHandler = function(ctx) {
     return {
@@ -39,7 +39,7 @@ let proxyHandler = function(ctx) {
             }
 
             if (isObject(value) && !Array.isArray(value)) {
-                    target[name] = ObservuI(value, {}, ctx);
+                    target[name] = Observer(value, {}, ctx);
             }
 
             if (!isObject(value)) {
@@ -52,32 +52,21 @@ let proxyHandler = function(ctx) {
     }
 };
 
-let ObservuI = function ObservuI(state, that, originalState) {
+let Observer = function Observer(state, that, originalState) {
     if (isObject(state) && !Array.isArray(state)) {
-       /* Object.keys(state).forEach((key) => {
-            if(isObject(state[key])){
-                that[key] = ObservuI(state[key], {}, originalState);
-            } else {
-                that[key] = state[key];
-            }
-        });*/
-
         var keys = Object.keys(state);
         for(var i=0; i < keys.length; i++){
             if(typeof state[keys[i]] === "object"){
-                that[keys[i]] = ObservuI(state[keys[i]], {}, originalState);
+                that[keys[i]] = Observer(state[keys[i]], {}, originalState);
             } else {
                 that[keys[i]] = state[keys[i]];
             }
         }
-
         return new Proxy(that, proxyHandler(originalState || state));
     }
-
     if (Array.isArray(state)) {
         return new Proxy(state, proxyHandler(originalState|| state));
     }
-
     if (!isObject(state)) {
         return state;
     }
@@ -85,15 +74,16 @@ let ObservuI = function ObservuI(state, that, originalState) {
 
 
 
-let Observu = function Observu(state) {
+let Observe = function Observe(state) {
     let isProxyAvailable = (typeof Proxy === "function");
     let newState = {};
 
     if(!isProxyAvailable){
-        require("./proxy-polyfill");
+        Proxy = ProxyPolyfill;
+        console.log(typeof Proxy === "function");
     }
     try{
-        return ObservuI(state, newState, newState);
+        return Observer(state, newState, newState);
     }catch (e){
         console.log(e);
         return state;
@@ -101,4 +91,4 @@ let Observu = function Observu(state) {
 
 };
 
-export default Observu;
+export default Observe;

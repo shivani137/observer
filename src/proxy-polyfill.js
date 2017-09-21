@@ -1,6 +1,7 @@
 /**
  * Created by shivani.tiwari on 21/09/17.
  */
+
 function Proxy (target, handler, revocable) {
     var self = this;//because life
     //override Object.prototype properties
@@ -157,9 +158,6 @@ function Proxy (target, handler, revocable) {
     for (var key in target)
         bind(key);
 
-    //Use Object.observe if supported, for more functionality (mirror properties as they are added, delete operator).
-    //As of Sept. 2015, only Chrome 36+ and Opera 23+ have Object.observe supported, so if you are using IE or Safari,
-    //this won't help you (if you're using Firefox, Proxy is built in, so you don't have a problem).
     if ('observe' in Object) {
         Object.observe(this, selfObserver);
         Object.observe(target, targetObserver);
@@ -187,3 +185,5 @@ function Proxy (target, handler, revocable) {
 };
 Proxy.prototype = Function.prototype;
 Proxy.revocable = function(target, handler) {return new Proxy(target, handler, true)};
+
+export default Proxy;
