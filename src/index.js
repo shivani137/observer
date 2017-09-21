@@ -79,7 +79,7 @@ let Observe = function Observe(state) {
     let newState = {};
 
     if(!isProxyAvailable){
-        Proxy = ProxyPolyfill;
+        window.Proxy = ProxyPolyfill;
         console.log(typeof Proxy === "function");
     }
     try{
