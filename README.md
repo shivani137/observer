@@ -5,7 +5,7 @@ Very simple library to observe for changes in JavaScript object. Observa utilize
 
 - Install using npm
 ```
-    npm install observa
+    npm install observer
 ```
 - Import in your project
 ```
@@ -13,7 +13,7 @@ Very simple library to observe for changes in JavaScript object. Observa utilize
 ```
 - Create object which can be observed
 ```
-    var person = Observa({
+    var person = Observer({
         name: {
             firstName: "John",
             lastName: "Doe"
